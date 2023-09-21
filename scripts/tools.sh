@@ -57,7 +57,7 @@ task_virtual_driver(){
 if [ "$#" -eq 0 ]; then
     color_echo "Please slecte you chioce:" $white
     color_echo "1) Set proxy with virtualbox" $yellow
-    color_echo "1) Install virtualbox driver" $yellow
+    color_echo "2) Install virtualbox driver" $yellow
     read -p "-> " user_input
 
     # Check the user's input and perform different actions
