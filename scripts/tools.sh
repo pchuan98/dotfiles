@@ -32,13 +32,13 @@ color_echo(){
 task_virtual_proxy(){
     host_ip=$(awk '/nameserver/ {split($2, a, "."); print a[1]"."a[2]"."a[3]".1"}' /etc/resolv.conf)
     port=10809
-        # note 这里是不起作用的，原因还不知道
-        export ALL_PROXY="http://$host_ip:$port"
-        export http_proxy="http://$host_ip:$port"
-        export https_proxy="http://$host_ip:$port"
-        git config --global https.proxy "http://$host_ip:$port"
-        git config --global http.proxy "http://$host_ip:$port"
-    }
+    # note 这里是不起作用的，原因还不知道
+    export ALL_PROXY="http://$host_ip:$port"
+    export http_proxy="http://$host_ip:$port"
+    export https_proxy="http://$host_ip:$port"
+    git config --global https.proxy "http://$host_ip:$port"
+    git config --global http.proxy "http://$host_ip:$port"
+}
 
 # vmware
 task_virtual_driver(){
