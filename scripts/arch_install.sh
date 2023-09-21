@@ -10,44 +10,36 @@ set -e
 
 ##############################################################################################################################
 
-# color
-black="\e[30m"
-red="\e[31m"
-green="\e[32m"
-yellow="\e[33m"
-blue="\e[34m"
-magenta="\e[35m"
-cyan="\e[36m"
-white="\e[37m"
-
-end="\e[0m"
-
-color_echo(){
-    local text="$1"  # The text to print
-    local color="$2" # The color code (e.g., 31 for red, 32 for green, 33 for yellow, etc.)
-    echo -e "${color}${text}${end}"  # Use ANSI escape sequences to set and reset color
-}
+# Set some colors for output messages
+OK="$(tput setaf 2)[OK]$(tput sgr0)"
+ERROR="$(tput setaf 1)[ERROR]$(tput sgr0)"
+NOTE="$(tput setaf 3)[NOTE]$(tput sgr0)"
+WARN="$(tput setaf 166)[WARN]$(tput sgr0)"
+CAT="$(tput setaf 6)[ACTION]$(tput sgr0)"
+ORANGE=$(tput setaf 166)
+YELLOW=$(tput setaf 3)
+RESET=$(tput sgr0)
 
 install(){
     software_package="$1"
 
     # 检查软件是否已经安装
     if yay -Q "$software_package" >/dev/null 2>&1; then
-        color_echo "Installed(yay) - $software_package" $green
+        echo "${OK} Installed(yay) - $software_package" 
     elif pacman -Q "$software_package" >/dev/null 2>&1; then
-        color_echo "Installed(pacman) - $software_package" $green
+        echo "${OK} Installed(pacman) - $software_package"
     else
         yay -S --noconfirm "$software_package"
         if [ $? -eq 0 ]; then
-            color_echo "Installed(yay) - $software_package" $green
+            echo "${OK} Installed(yay) - $software_package" 
         else
-            color_echo "Error(yay) - $software_package" $red
+            echo "${ERROR} Error(yay) - $software_package"
             sudo pacman -S --noconfirm "$software_package"
 
             if [ $? -eq 0 ]; then
-                color_echo "Installed(pacman) - $software_package" $green
+                echo "${OK} Installed(pacman) - $software_package"
             else
-                color_echo "Error(pacman) - $software_package" $red
+                echo "${ERROR} Error(pacman) - $software_package"
             fi
         fi
     fi
@@ -133,8 +125,8 @@ task02(){
 }
 
 if [ "$#" -eq 0 ]; then
-    color_echo "Please slecte you chioce:" $white
-    color_echo "1) Add User" $yellow
+    echo "Please slecte you chioce:"
+    echo "1) Add User"
 
     read -p "-> " user_input
 
@@ -147,7 +139,7 @@ if [ "$#" -eq 0 ]; then
     elif [ "$user_input" -eq 3 ]; then
         task_config
     else
-        color_echo "Invalid input. Please enter 1,2,3." $red
+        echo "${ERROR} Invalid input. Please enter 1,2,3."
     fi
 
 elif [ "$#" -eq 1 ]; then
@@ -166,9 +158,9 @@ elif [ "$#" -eq 1 ]; then
 
             ;;
     *)
-        color_echo "Invalid input. Please enter 1,2,3." $red
+        echo "${ERROR} Invalid input. Please enter 1,2,3."
         ;;
     esac
 else
-    color_echo "Invalid input." $red
+    echo "${ERROR} Invalid input."
 fi
