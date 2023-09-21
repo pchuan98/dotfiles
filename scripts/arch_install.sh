@@ -7,7 +7,7 @@ set -e
 # Description: Config arch linx.
 
 # 参考 https://github.com/JaKooLit/Hyprland-v4
-
+# https://blog.cascade.moe/posts/hyprland-configure/
 ##############################################################################################################################
 
 # Set some colors for output messages
@@ -45,10 +45,11 @@ install(){
     fi
 }
 
+LOG="install-$(date +%d-%H%M%S)_hypr-pkgs.log"
 ##############################################################################################################################
 
 # add an user
-task01(){
+task_user(){
     # set time
     timedatectl set-local-rtc true
     timedatectl set-ntp true
@@ -61,7 +62,7 @@ task01(){
 }
 
 # config pacman and install some software
-task02(){
+task_pacman(){
     cn='i\
 [archlinuxcn]\
 Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/$arch\
@@ -94,73 +95,107 @@ Server = https://repo.huaweicloud.com/archlinuxcn/$arch\
 }
 
 # install core software
-# tldr 
-# alacritty rofi
-# hyprland waybar
-# zsh zsh-syntax-highlighting zsh-autosuggestions
-# gtk gtk2 gtk3 gtk4 gtkmm gtkmm3 gtkmm-4.0
+# gtk enviorment    gtk gtk2 gtk3 gtk4 gtkmm gtkmm3 gtkmm-4.0 xorg-xwayland 
+# qt enviorment     qt5-wayland qt6-wayland glfw-wayland qt6ct qt5ct
+# clip-board        cliphist wl-clipboard
+# core              wayland hyprland
+# core-extra        xdg-desktop-portal-hyprland
+# core-software     alacritty rofi waybar dunst swww
+# launch            sddm-git
+# expolrer          thunar thunar-volman tumbler thunar-archive-plugin
+# core-tools        pipewire wireplumber slurp grim obs-studio
+# terminal          zsh zsh-syntax-highlighting zsh-autosuggestions
+# polkit            polkit polkit-qt5 polkit-gnome polkit-kde-agent
+# chinese font      adobe-source-han-serif-cn-fonts wqy-zenhei
+# google fonts      noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra
+# nerd fonts        ttf-firacode-nerd ttf-dejavu-nerd
+# ime               fcitx5 fcitx5-configtool fcitx5-gtk fcitx5-qt fcitx5-chinese-addons fcitx5-material-color fcitx5-nord fcitx5-pinyin-moegirl
+# effiency          tlp tlp-rdw tlpui
+# others            tldr ntfs-3g timeshift wget
 ##################################################################################################
-task03(){
+base=(
+    gtk gtk2 gtk3 gtk4 gtkmm gtkmm3 gtkmm-4.0 xorg-xwayland
+    qt5-wayland qt6-wayland glfw-wayland qt6ct qt5ct
+    cliphist wl-clipboard
+    wayland hyprland-git
+    sddm-git
+    xdg-desktop-portal-hyprland
+)
 
+software=(
+    alacritty rofi waybar dunst swww
+    thunar thunar-volman tumbler thunar-archive-plugin
+)
 
-    # 基础功能
-    yay -S rust wayland rofi alacritty hyprland dunst waybar
+shell=(zsh zsh-syntax-highlighting zsh-autosuggestions)
 
-    # 驱动软件
+polkit=(polkit polkit-qt5 polkit-gnome polkit-kde-agent)
 
-    # 字体
+fonts=(
+    adobe-source-han-serif-cn-fonts wqy-zenhei
+    noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra
+    ttf-firacode-nerd ttf-dejavu-nerd
+)
+# https://wiki.archlinux.org/title/Fcitx5
+ime=(fcitx5 fcitx5-configtool fcitx5-gtk fcitx5-qt fcitx5-chinese-addons fcitx5-material-color fcitx5-nord fcitx5-pinyin-moegirl)
 
-    # 输入法
+tools=(
+    # tlp tlp-rdw tlpui
+    pipewire wireplumber slurp grim obs-studio
+)
 
-    # 常用软件
+others=(tldr ntfs-3g timeshift wget)
 
-    # 备份软件
+task_software(){
+    # compile tools
+    install rust
 
+    for PKG1 in "${base[@]}" "${software[@]}" "${shell[@]}" "${polkit[@]}" "${fonts[@]}" "${ime[@]}" "${tools[@]}" "${others[@]}"; do
+        install "$PKG1" 2>&1 | tee -a "$LOG"
+        if [ $? -ne 0 ]; then
+            echo -e "\e[1A\e[K${ERROR} - $PKG1 install had failed, please check the install.log"
+            exit 1
+        fi
+    done
 }
 
+##########################################################################################################################
+# remember to run 'libtool --finish /usr/lib'
+# 
+#########################################################################################################################
 
-# 美化使用
-task02(){
-    # sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"  
+
+task_driver(){
+    # bluetooth
+
+    # network
+
+    # GPU
+
+    # screen
+
+    # voice
+
+    # figure
+
+    # vpn
+
+    # 美化
+    echo ""
 }
 
-if [ "$#" -eq 0 ]; then
-    echo "Please slecte you chioce:"
-    echo "1) Add User"
+# the driver for amd
+task_amd(){
+    echo ""
+    sudo pacman -S mesa lib32-mesa xf86-video-amdgpu vulkan-radeon lib32-vulkan-radeon
+}
 
-    read -p "-> " user_input
+# the driver for intel
+task_intel(){
+    echo ""
+}
 
-    # Check the user's input and perform different actions
-    if [ "$user_input" -eq 1 ]; then
-        task01
-    # Add your code for action 1 here
-    elif [ "$user_input" -eq 2 ]; then
-        task_arch
-    elif [ "$user_input" -eq 3 ]; then
-        task_config
-    else
-        echo "${ERROR} Invalid input. Please enter 1,2,3."
-    fi
-
-elif [ "$#" -eq 1 ]; then
-    # Get the first argument
-    argument="$1"
-
-    # Perform actions based on the argument
-    case "$argument" in
-        "1")
-            task01
-            ;;
-        "2")
-
-            ;;
-        "3")
-
-            ;;
-    *)
-        echo "${ERROR} Invalid input. Please enter 1,2,3."
-        ;;
-    esac
-else
-    echo "${ERROR} Invalid input."
-fi
+# the driver for nvidia
+task_nvidia(){
+    echo ""
+}
