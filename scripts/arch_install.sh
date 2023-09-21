@@ -6,6 +6,8 @@ set -e
 # Date: September 14, 2023
 # Description: Config arch linx.
 
+# 参考 https://github.com/JaKooLit/Hyprland-v4
+
 ##############################################################################################################################
 
 # color
@@ -26,8 +28,34 @@ color_echo(){
     echo -e "${color}${text}${end}"  # Use ANSI escape sequences to set and reset color
 }
 
+install(){
+    software_package="$1"
+
+    # 检查软件是否已经安装
+    if yay -Q "$software_package" >/dev/null 2>&1; then
+        color_echo "Installed(yay) - $software_package" $green
+    elif pacman -Q "$software_package" >/dev/null 2>&1; then
+        color_echo "Installed(pacman) - $software_package" $green
+    else
+        yay -S --noconfirm "$software_package"
+        if [ $? -eq 0 ]; then
+            color_echo "Installed(yay) - $software_package" $green
+        else
+            color_echo "Error(yay) - $software_package" $red
+            sudo pacman -S --noconfirm "$software_package"
+
+            if [ $? -eq 0 ]; then
+                color_echo "Installed(pacman) - $software_package" $green
+            else
+                color_echo "Error(pacman) - $software_package" $red
+            fi
+        fi
+    fi
+}
+
 ##############################################################################################################################
 
+# add an user
 task01(){
     # set time
     timedatectl set-local-rtc true
@@ -40,6 +68,7 @@ task01(){
     EDITOR=nvim visudo
 }
 
+# config pacman and install some software
 task02(){
     cn='i\
 [archlinuxcn]\
@@ -57,9 +86,30 @@ Server = https://repo.huaweicloud.com/archlinuxcn/$arch\
     pacman -Syyu
     pacman -S --noconfirm --needed archlinuxcn-keyring archlinux-keyring
     pacman -S --noconfirm --needed git linux-headers
-    pacman -S --noconfirm --needed yay tldr
-    
-  
+    pacman -S --noconfirm --needed yay
+
+    git config --system user.email "1114003209@qq.com"
+    git config --system user.name "pchuan98"
+    git config --system credential.helper store
+
+    git config --system init.defaultBranch master
+    git config --system pager.branch false
+    git config --system pager.diff false
+    git config --system pager.log false
+
+    git config --system merge.tool vimdiff 
+    git config --system mergetool.vimdiff.path nvim
+}
+
+# install core software
+# tldr 
+# alacritty rofi
+# hyprland waybar
+# zsh zsh-syntax-highlighting zsh-autosuggestions
+# gtk gtk2 gtk3 gtk4 gtkmm gtkmm3 gtkmm-4.0
+##################################################################################################
+task03(){
+
 
     # 基础功能
     yay -S rust wayland rofi alacritty hyprland dunst waybar
@@ -76,21 +126,6 @@ Server = https://repo.huaweicloud.com/archlinuxcn/$arch\
 
 }
 
-task_git(){
-    pacman -S --noconfirm --needed git
-
-    git config --system user.email "1114003209@qq.com"
-    git config --system user.name "pchuan98"
-    git config --system credential.helper store
-
-    git config --system init.defaultBranch master
-    git config --system pager.branch false
-    git config --system pager.diff false
-    git config --system pager.log false
-
-    git config --system merge.tool vimdiff 
-    git config --system mergetool.vimdiff.path nvim
-}
 
 # 美化使用
 task02(){
