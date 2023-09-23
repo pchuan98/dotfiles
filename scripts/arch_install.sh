@@ -95,31 +95,35 @@ Server = https://repo.huaweicloud.com/archlinuxcn/$arch\
 }
 
 # install core software
-# gtk enviorment    gtk gtk2 gtk3 gtk4 gtkmm gtkmm3 gtkmm-4.0 xorg-xwayland 
-# qt enviorment     qt5-wayland qt6-wayland glfw-wayland qt6ct qt5ct
-# clip-board        cliphist wl-clipboard
-# core              wayland hyprland
-# core-extra        xdg-desktop-portal-hyprland
-# core-software     alacritty rofi waybar dunst swww
-# launch            sddm-git
-# expolrer          thunar thunar-volman tumbler thunar-archive-plugin
-# core-tools        pipewire wireplumber slurp grim obs-studio
-# terminal          zsh zsh-syntax-highlighting zsh-autosuggestions
-# polkit            polkit polkit-qt5 polkit-gnome polkit-kde-agent
-# chinese font      adobe-source-han-serif-cn-fonts wqy-zenhei
-# google fonts      noto-fonts noto-fonts-cjk noto-fonts-emoji noto-fonts-extra
-# nerd fonts        ttf-firacode-nerd ttf-dejavu-nerd
-# ime               fcitx5 fcitx5-configtool fcitx5-gtk fcitx5-qt fcitx5-chinese-addons fcitx5-material-color fcitx5-nord fcitx5-pinyin-moegirl
-# effiency          tlp tlp-rdw tlpui
-# others            tldr ntfs-3g timeshift wget
+# xorg-xrdb -> set dpi
 ##################################################################################################
 base=(
     gtk gtk2 gtk3 gtk4 gtkmm gtkmm3 gtkmm-4.0 xorg-xwayland
-    qt5-wayland qt6-wayland glfw-wayland qt6ct qt5ct
+    glfw-wayland qt6ct qt5ct
+
+    qt5-3d qt5-base qt5-charts qt5-connectivity qt5-datavis3d
+    qt5-declarative qt5-doc qt5-examples qt5-gamepad qt5-graphicaleffects
+    qt5-imageformats qt5-location qt5-lottie qt5-multimedia qt5-networkauth
+    qt5-purchasing qt5-quick3d qt5-quickcontrols qt5-quickcontrols2
+    qt5-quicktimeline qt5-remoteobjects qt5-script qt5-scxml qt5-sensors
+    qt5-serialbus qt5-serialport qt5-speech qt5-svg qt5-tools qt5-translations
+    qt5-virtualkeyboard qt5-wayland qt5-webchannel qt5-webengine qt5-webglplugin
+    qt5-websockets qt5-webview qt5-x11extras qt5-xmlpatterns
+
+    qt6-3d qt6-5compat qt6-base qt6-charts qt6-connectivity qt6-datavis3d
+    qt6-declarative qt6-doc qt6-examples qt6-grpc qt6-httpserver
+    qt6-imageformats qt6-languageserver qt6-location qt6-lottie qt6-multimedia qt6-networkauth
+    qt6-positioning qt6-quick3d qt6-quick3dphysics qt6-quickeffectmaker qt6-quicktimeline
+    qt6-remoteobjects qt6-scxml qt6-sensors qt6-serialbus qt6-serialport qt6-shadertools
+    qt6-speech qt6-svg qt6-tools qt6-translations qt6-virtualkeyboard qt6-wayland
+    qt6-webchannel qt6-webengine qt6-websockets qt6-webview
+
     cliphist wl-clipboard
-    wayland hyprland-git
+    wayland hyprland
     sddm-git
     xdg-desktop-portal-hyprland
+
+    xorg-xrdb
 )
 
 software=(
@@ -148,8 +152,6 @@ others=(tldr ntfs-3g timeshift wget)
 
 task_software(){
     # compile tools
-    install rust
-
     for PKG1 in "${base[@]}" "${software[@]}" "${shell[@]}" "${polkit[@]}" "${fonts[@]}" "${ime[@]}" "${tools[@]}" "${others[@]}"; do
         install "$PKG1" 2>&1 | tee -a "$LOG"
         if [ $? -ne 0 ]; then
