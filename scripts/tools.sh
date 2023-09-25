@@ -54,6 +54,10 @@ task_virtual_driver(){
     sudo mkinitcpio -p linux
 }
 
+task_host(){
+    # https://gitlab.com/ineo6/hosts/-/raw/master/next-hosts
+}
+
 if [ "$#" -eq 0 ]; then
     color_echo "Please slecte you chioce:" $white
     color_echo "1) Set proxy with virtualbox" $yellow
