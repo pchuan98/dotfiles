@@ -1,4 +1,3 @@
-dir="/home/chuan/dotfiles/zsh"
 cd /home/$(whoami)
 
 ##############################################################################################################
@@ -34,6 +33,7 @@ bindkey '^[[1;5C' forward-word
 #    ╚══════╝╚═╝  ╚═══╝  ╚═══╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝╚══════╝╚═╝  ╚═══╝   ╚═╝
 #
 
+export ZSH_CONFIG_DIR="/home/chuan/dotfiles/zsh"
 
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_CACHE_HOME="$HOME/.cache"
@@ -85,8 +85,10 @@ alias ys="yay -Q |  fzf --preview 'yay -Qi {1}'"
 # zsh
 alias sz='source ~/.zshrc'
 
-# git
-alias gst="git status"
+# git && lazygit
+alias lg=lazygit
+alias gs="git status"
+alias gm="git commit -m"
 
 # tools
 alias ls="exa --color=auto"
@@ -206,13 +208,9 @@ CORRECT
 EQUALS
 EOF
 
-command -v zoxide &>/dev/null && eval "$(zoxide init zsh)"
-# eval "$(fnm env --use-on-cd)" 
-
 # Set editor default keymap to emacs (`-e`) or vi (`-v`)
 bindkey -e
 
-# vim:filetype=zsh:nowrap
 ##############################################################################################################
 
 ##############################################################################################################
@@ -225,6 +223,6 @@ bindkey -e
 #    ╚═╝     ╚══════╝ ╚═════╝  ╚═════╝ ╚═╝╚═╝  ╚═══╝╚══════╝
 #
 
-source "$dir/plugins.zsh"
+source "$ZSH_CONFIG_DIR/plugins.zsh"
 
 ##############################################################################################################

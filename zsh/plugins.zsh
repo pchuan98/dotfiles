@@ -28,7 +28,7 @@ fi
 source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
 zinit ice blockf atpull'zinit creinstall -q .'
 
-# source "$HOME/zsh/tools/benchmark.zsh"
+# source "$ZSH_CONFIG_DIR/tools/benchmark.zsh"
 
 ##############################################################################################################
 
@@ -72,7 +72,7 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 
-[[ ! -f $dir/p10k.zsh ]] || source $dir/p10k.zsh
+[[ ! -f $ZSH_CONFIG_DIR/p10k.zsh ]] || source $ZSH_CONFIG_DIR/p10k.zsh
 
 # https://github.com/trapd00r/LS_COLORS
 # https://zdharma-continuum.github.io/zinit/wiki/LS_COLORS-explanation/
@@ -220,7 +220,8 @@ zstyle ':fzf-tab:*' fzf-min-height 30
 (($+commands[jq])) || jq() {echo ';'}
 
 local dir=${0:h} src line arr ctx flags
-for src in $dir/fzf-tab/*.zsh $sources; do
+
+for src in $ZSH_CONFIG_DIR/fzf-tab/*.zsh $sources; do
   while read -r line; do
     arr=(${(@s. .)line##\# })
     ctx=${arr[1]}
@@ -273,15 +274,16 @@ zinit light sharkdp/fd
 zinit ice wait lucid from"gh-r" as"program" mv"*/rg -> rg"
 zinit light BurntSushi/ripgrep
 
+export _ZO_ECHO='1'
+export _ZO_DATA_DIR=$HOME/.cache/zoxide
+export _ZO_FZF_OPTS=$FZF_DEFAULT_OPTS
+
+command -v zoxide &>/dev/null && eval "$(zoxide init zsh)"
+# eval "$(zoxide init zsh)"
+
 # zi ice as'null' from"gh-r" sbin
 # zi light ajeetdsouza/zoxide
 
 # zi ice has'zoxide'
 # zi light z-shell/zsh-zoxide
-
-export _ZO_ECHO='1'
-export _ZO_DATA_DIR=$HOME/.cache/zoxide
-export _ZO_FZF_OPTS=$FZF_DEFAULT_OPTS
-eval "$(zoxide init zsh)"
-
 ##############################################################################################################
