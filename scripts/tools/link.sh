@@ -8,7 +8,7 @@ HOME=/home/chuan
 
 # link dotfiles
 ln -sf $DOTFIRE_DIR/alacritty $CONFIG_DIR
-ln -sf $DOTFIRE_DIR/hyper $CONFIG_DIR
+ln -sf $DOTFIRE_DIR/hypr $CONFIG_DIR
 mkdir -p $CONFIG_DIR/lazygit && ln -sf $DOTFIRE_DIR/lazygit/config.yml $CONFIG_DIR/lazygit/config.yml
 ln -sf $DOTFIRE_DIR/waybar $CONFIG_DIR
 ln -sf $DOTFIRE_DIR/nvim $CONFIG_DIR
