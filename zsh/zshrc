@@ -32,7 +32,7 @@ bindkey '^[[1;5C' forward-word
 #    ███████╗██║ ╚████║ ╚████╔╝ ██║██║  ██║╚██████╔╝██║ ╚████║██║ ╚═╝ ██║███████╗██║ ╚████║   ██║
 #    ╚══════╝╚═╝  ╚═══╝  ╚═══╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝╚══════╝╚═╝  ╚═══╝   ╚═╝
 #
-
+export DOTFILES_DIR="/home/chuan/dotfiles"
 export ZSH_CONFIG_DIR="/home/chuan/dotfiles/zsh"
 
 export XDG_CONFIG_HOME="$HOME/.config"
@@ -105,6 +105,9 @@ alias rm='rm -vr'
 alias cat="bat --color always --plain"
 alias grep='grep --color=auto'
 
+alias v=nvim
+alias fm=yazi
+
 # Toilet
 export TOILET_FONT_DIR=$HOME/dotfiles/fonts
 alias tf1="toilet -t -d $TOILET_FONT_DIR -f ansi_regular"
@@ -116,7 +119,6 @@ alias tf6="toilet -t -d $TOILET_FONT_DIR -f blocks"
 alias tf7="toilet -t -d $TOILET_FONT_DIR -f electronic"
 alias tf8="toilet -t -d $TOILET_FONT_DIR -f varsity"
 
-
 # quicker
 alias ..="cd .."
 alias mkgrub='sudo grub-mkconfig -o /boot/grub/grub.cfg'
@@ -124,8 +126,8 @@ alias installed="grep -i installed /var/log/pacman.log"
 alias psg="ps aux | grep -v grep | grep -i -e VSZ -e" 
 
 # others
-alias v=nvim
-alias fm=yazi
+# alias rm='$DOTFILES_DIR/tools/trash.sh'
+
 ##############################################################################################################
 
 ##############################################################################################################
