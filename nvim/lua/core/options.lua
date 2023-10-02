@@ -26,11 +26,12 @@ option.title = true
 option.swapfile = false
 option.backup = false
 option.updatetime = 50
- option.mouse = "a"
+option.mouse = "a"
 option.undofile = true
 option.undodir = vim.fn.expand('$HOME/.local/share/nvim/undo')
 option.exrc = true
 option.wrap = true
+
 option.splitright = true
 option.splitbelow = true
 
@@ -39,3 +40,6 @@ buffer.fileenconding = "utf-8"
 
 -- 底部最小剩余5行
 option.scrolloff = 10
+
+-- option.laststatus = 1  -- 显示状态栏
+option.laststatus = 0  -- 隐藏状态栏
