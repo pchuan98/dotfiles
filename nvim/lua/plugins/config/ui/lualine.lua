@@ -42,7 +42,7 @@ local options = {
     component_separators = "",
     section_separators = "",
     disabled_filetypes = {
-        statusline = {},
+        statusline = {"alpha"},
         winbar = {}
     },
     ignore_focus = {},
@@ -83,15 +83,16 @@ local right_flag = {
 local mode = {
     -- mode component
     function()
-        return ''
+        return ''
     end,
     color = function()
         return {
+            gui = 'bold',
             fg = mode_color[vim.fn.mode()]
         }
     end,
     padding = {
-        right = 1
+        right = 0
     },
     bg = ""
 }
@@ -160,8 +161,8 @@ local fileformat = {
 
 local filetype = {
     "filetype",
-    fmt = string.lower,
-    icons_enabled = false,
+    icon_only = false,
+    icons_enabled = true,
     color = {
         fg = colors.fg
     }
@@ -173,7 +174,7 @@ local lsp = {
         local buf_ft = vim.api.nvim_buf_get_option(0, 'filetype')
         local clients = vim.lsp.get_active_clients()
         if next(clients) == nil then
-            return msg
+            return ""
         end
         for _, client in ipairs(clients) do
             local filetypes = client.config.filetypes
@@ -210,7 +211,7 @@ return function()
             lualine_y = {},
             lualine_z = {}
         },
-        extensions = {"quickfix"}
+        extensions = { "neo-tree", "lazy" },
     }
 
     lualine.setup(config)

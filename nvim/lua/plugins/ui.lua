@@ -1,4 +1,4 @@
-return { -- https://github.com/folke/tokyonight.nvim
+local colorschemes = { -- https://github.com/folke/tokyonight.nvim
 {
     "folke/tokyonight.nvim",
     lazy = false,
@@ -20,9 +20,82 @@ return { -- https://github.com/folke/tokyonight.nvim
         require("tokyodark").setup(opts)
         -- vim.cmd [[colorscheme tokyodark]]
     end
-} -- https://github.com/nvim-lualine/lualine.nvim
-, {
+}, -- https://github.com/catppuccin/nvim
+{
+    "catppuccin/nvim",
+    name = "catppuccin",
+    lazy = false,
+    priority = 1000,
+    opts = require("plugins.config.ui.catppuccin")
+}}
 
+local indent = { -- https://github.com/lukas-reineke/indent-blankline.nvim
+{
+    "lukas-reineke/indent-blankline.nvim",
+    -- event = "LazyFile",
+    opts = {
+        indent = {
+            char = "│",
+            tab_char = "│"
+        },
+        scope = {
+            enabled = false
+        },
+        exclude = {
+            filetypes = {"help", "alpha", "dashboard", "neo-tree", "Trouble", "lazy", "mason", "notify", "toggleterm",
+                         "lazyterm"}
+        }
+    },
+    main = "ibl"
+} -- https://github.com/echasnovski/mini.nvim/blob/main/readmes/mini-indentscope.md
+, {
+    "echasnovski/mini.indentscope",
+    version = false,
+    opts = require("plugins.config.ui.indent"),
+    init = function()
+        vim.api.nvim_create_autocmd("FileType", {
+            pattern = {"help", "alpha", "dashboard", "neo-tree", "Trouble", "lazy", "mason", "notify", "toggleterm",
+                       "lazyterm"},
+            callback = function()
+                vim.b.miniindentscope_disable = true
+            end
+        })
+    end
+}}
+
+local tree = -- https://github.com/nvim-neo-tree/neo-tree.nvim
+{
+    "nvim-neo-tree/neo-tree.nvim",
+    cmd = "Neotree",
+    branch = "v3.x",
+    keys = {{
+        "<leader>t",
+        function()
+            require("neo-tree.command").execute({
+                toggle = true,
+                dir = vim.fn.expand('%:p:h')
+            })
+        end,
+        desc = "Explorer NeoTree (root dir)"
+    }},
+    dependencies = {"nvim-lua/plenary.nvim", "nvim-tree/nvim-web-devicons", "MunifTanjim/nui.nvim"},
+    init = function()
+        -- open neotree when vim is called with a directory argument
+        if vim.fn.argc() == 1 then
+            local stat = vim.loop.fs_stat(vim.fn.argv(0))
+            if stat and stat.type == "directory" then
+                require("neo-tree")
+            end
+        end
+    end,
+    opts = require("plugins.config.ui.neotree"),
+    config = function(_, opts)
+        require("neo-tree").setup(opts)
+    end
+}
+
+local bar = { -- https://github.com/nvim-lualine/lualine.nvim
+{
     "nvim-lualine/lualine.nvim",
     lazy = false,
     dependencies = {"nvim-tree/nvim-web-devicons", "nvim-lua/lsp-status.nvim"},
@@ -37,56 +110,67 @@ return { -- https://github.com/folke/tokyonight.nvim
 } -- https://github.com/akinsho/bufferline.nvim
 , {
     "akinsho/bufferline.nvim",
-    dependencies = {"nvim-tree/nvim-web-devicons"},
+    dependencies = {"nvim-tree/nvim-web-devicons", {
+        'echasnovski/mini.bufremove',
+        version = false
+    }},
     lazy = false,
-    config = function()
-        require("bufferline").setup()
-    end
-} -- https://github.com/echasnovski/mini.nvim/blob/main/readmes/mini-indentscope.md
-, {
-    'echasnovski/mini.indentscope',
-    version = false,
-    opts = require("plugins.config.indentscope")
-} -- https://github.com/goolord/alpha-nvim
-, {
+    opts = require("plugins.config.ui.bufferline")
+}}
+
+local board = -- https://github.com/goolord/alpha-nvim
+{
     'goolord/alpha-nvim',
-    config = function()
-        require'alpha'.setup(require'alpha.themes.dashboard'.config)
-    end
-}, {
+    config = require("plugins.config.ui.alpha")
+}
+
+local utils = { -- https://github.com/rcarriga/nvim-notify
+{
     "rcarriga/nvim-notify",
     lazy = false,
-    priority = 1000,
-    config = function()
-        require("notify").setup({})
-
-        vim.notify = require("notify")
-    end
-}, {
-    "nvim-neo-tree/neo-tree.nvim",
-    branch = "v3.x",
-    dependencies = {"nvim-lua/plenary.nvim", "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
-    "MunifTanjim/nui.nvim"},
-    config = function()
-        require("neo-tree").setup()
-        vim.keymap.set("n", "<leader>t", [[<cmd>Neotree toggle<cr>]])
-    end
-}, {
+    keys = {{
+        "<leader>un",
+        function()
+            require("notify").dismiss({
+                silent = true,
+                pending = true
+            })
+        end,
+        desc = "Dismiss all Notifications"
+    }},
+    opts = require("plugins.config.ui.notify")
+}, -- https://github.com/folke/which-key.nvim
+{
     "folke/which-key.nvim",
     event = "VeryLazy",
     init = function()
         vim.o.timeout = true
         vim.o.timeoutlen = 300
     end,
-    opts = {
-        -- your configuration comes here
-        -- or leave it empty to use the default settings
-        -- refer to the configuration section below
-    }
-}, {
+    opts = require("plugins.config.ui.whichkey"),
+    config = function(_, opts)
+        local wk = require("which-key")
+        wk.setup(opts)
+        wk.register(opts.defaults)
+    end
+}, -- https://github.com/stevearc/dressing.nvim 
+{
     'stevearc/dressing.nvim',
+    init = function()
+        ---@diagnostic disable-next-line: duplicate-set-field
+        vim.ui.select = function(...)
+            require("dressing.nvim")
+            return vim.ui.select(...)
+        end
+        ---@diagnostic disable-next-line: duplicate-set-field
+        vim.ui.input = function(...)
+            require("dressing.nvim")
+            return vim.ui.input(...)
+        end
+    end,
     opts = {}
-}, {
+}, -- https://github.com/folke/noice.nvim
+{
     "folke/noice.nvim",
     event = "VeryLazy",
     opts = {
@@ -97,24 +181,64 @@ return { -- https://github.com/folke/tokyonight.nvim
     --   `nvim-notify` is only needed, if you want to use the notification view.
     --   If not available, we use `mini` as the fallback
     "rcarriga/nvim-notify", "stevearc/dressing.nvim"},
-    config = function()
-        require("noice").setup({
-            lsp = {
-                -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
-                override = {
-                    ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-                    ["vim.lsp.util.stylize_markdown"] = true,
-                    ["cmp.entry.get_documentation"] = true
-                }
-            },
-            -- you can enable a preset for easier configuration
-            presets = {
-                bottom_search = true, -- use a classic bottom cmdline for search
-                command_palette = true, -- position the cmdline and popupmenu together
-                long_message_to_split = true, -- long messages will be sent to a split
-                inc_rename = false, -- enables an input dialog for inc-rename.nvim
-                lsp_doc_border = false -- add a border to hover docs and signature help
-            }
-        })
-    end
+    opts = require("plugins.config.ui.noice"),
+    config = function(_, opts)
+        require("noice").setup(opts)
+    end,
+    keys = {{
+        "<S-Enter>",
+        function()
+            require("noice").redirect(vim.fn.getcmdline())
+        end,
+        mode = "c",
+        desc = "Redirect Cmdline"
+    }, {
+        "<leader>snl",
+        function()
+            require("noice").cmd("last")
+        end,
+        desc = "Noice Last Message"
+    }, {
+        "<leader>snh",
+        function()
+            require("noice").cmd("history")
+        end,
+        desc = "Noice History"
+    }, {
+        "<leader>sna",
+        function()
+            require("noice").cmd("all")
+        end,
+        desc = "Noice All"
+    }, {
+        "<leader>snd",
+        function()
+            require("noice").cmd("dismiss")
+        end,
+        desc = "Dismiss All"
+    }, {
+        "<c-f>",
+        function()
+            if not require("noice.lsp").scroll(4) then
+                return "<c-f>"
+            end
+        end,
+        silent = true,
+        expr = true,
+        desc = "Scroll forward",
+        mode = {"i", "n", "s"}
+    }, {
+        "<c-b>",
+        function()
+            if not require("noice.lsp").scroll(-4) then
+                return "<c-b>"
+            end
+        end,
+        silent = true,
+        expr = true,
+        desc = "Scroll backward",
+        mode = {"i", "n", "s"}
+    }}
 }}
+
+return {colorschemes, indent, tree, bar, board, utils}

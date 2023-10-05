@@ -16,11 +16,6 @@ local nmappings = {
     -- test
     {from = "<C-s>", to = "<ESC>:w<CR>:source<CR>"},
     {from = "qq", to = "<ESC>:q<CR>"},
-
-    {from = "J", to = "5j"},
-    {from = "K", to = "5k"},
-    {from = "H", to = "5h"},
-    {from = "L", to = "5l"},
 }
 
 for _, mapping in ipairs(nmappings) do

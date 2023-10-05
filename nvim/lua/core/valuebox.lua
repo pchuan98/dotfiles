@@ -1,13 +1,15 @@
 local M = {}
 
--- ["tokyonight","tokyodark"]
-M.theme = "tokyonight"
+-- ["tokyonight","tokyodark","catppuccin"]
+M.theme = "catppuccin"
 
 M.load_theme = function()
     if M.theme == "tokyonight" then
         vim.cmd("colorscheme tokyonight")
     elseif M.theme == "tokyodark" then
         vim.cmd("colorscheme tokyodark")
+    elseif M.theme == "catppuccin" then
+        vim.cmd.colorscheme "catppuccin"
     else
         vim.notify("Current theme is not supported")
     end

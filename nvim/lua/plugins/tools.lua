@@ -7,6 +7,25 @@ local git = {
     end
 }
 
+local jk = {
+    "rainbowhxch/accelerated-jk.nvim",
+    config = function()
+        local opts = {
+            mode = 'time_driven',
+            enable_deceleration = false,
+            acceleration_motions = {},
+            acceleration_limit = 150,
+            acceleration_table = {7, 12, 17, 21, 24, 26, 28, 30},
+            -- when 'enable_deceleration = true', 'deceleration_table = { {200, 3}, {300, 7}, {450, 11}, {600, 15}, {750, 21}, {900, 9999} }'
+            deceleration_table = {{150, 9999}}
+        }
+
+        vim.api.nvim_set_keymap('n', 'j', '<Plug>(accelerated_jk_gj)', {})
+        vim.api.nvim_set_keymap('n', 'k', '<Plug>(accelerated_jk_gk)', {})
+        require("accelerated-jk").setup(opts)
+    end
+}
+
 -- https://github.com/RRethy/vim-illuminate
 local highlight = {
     "RRethy/vim-illuminate",
@@ -69,25 +88,6 @@ local highlight = {
         require("illuminate").configure(opts)
     end
 
-}
-
-local jk = {
-    "rainbowhxch/accelerated-jk.nvim",
-    config = function()
-        local opts = {
-            mode = 'time_driven',
-            enable_deceleration = false,
-            acceleration_motions = {},
-            acceleration_limit = 150,
-            acceleration_table = {7, 12, 17, 21, 24, 26, 28, 30},
-            -- when 'enable_deceleration = true', 'deceleration_table = { {200, 3}, {300, 7}, {450, 11}, {600, 15}, {750, 21}, {900, 9999} }'
-            deceleration_table = {{150, 9999}}
-        }
-
-        vim.api.nvim_set_keymap('n', 'j', '<Plug>(accelerated_jk_gj)', {})
-        vim.api.nvim_set_keymap('n', 'k', '<Plug>(accelerated_jk_gk)', {})
-        require("accelerated-jk").setup(opts)
-    end
 }
 
 local pairs = {
@@ -171,23 +171,30 @@ local picker = {
 local persistence = {
     "folke/persistence.nvim",
     event = "BufReadPre",
-    config = function()
-        local opts = {
-            dir = vim.fn.expand(vim.fn.stdpath("state") .. "/sessions/"),
-            options = {"buffers", "curdir", "tabpages", "winsize"},
-            pre_save = nil
-        }
-        require("persistence").setup(opts)
-
-        -- restore the session for the current directory
-        vim.api.nvim_set_keymap("n", "<leader>qs", [[<cmd>lua require("persistence").load()<cr>]], {})
-
-        -- restore the last session
-        vim.api.nvim_set_keymap("n", "<leader>ql", [[<cmd>lua require("persistence").load({ last = true })<cr>]], {})
-
-        -- stop Persistence => session won't be saved on exit
-        vim.api.nvim_set_keymap("n", "<leader>qd", [[<cmd>lua require("persistence").stop()<cr>]], {})
-    end
+    opts = {
+        options = {"buffers", "curdir", "tabpages", "winsize", "help", "globals", "skiprtp"}
+    },
+    keys = {{
+        "<leader>qs",
+        function()
+            require("persistence").load()
+        end,
+        desc = "Restore Session"
+    }, {
+        "<leader>ql",
+        function()
+            require("persistence").load({
+                last = true
+            })
+        end,
+        desc = "Restore Last Session"
+    }, {
+        "<leader>qd",
+        function()
+            require("persistence").stop()
+        end,
+        desc = "Don't Save Current Session"
+    }}
 }
 
 return {git, highlight, jk, pairs, lastplace, flash, comment, picker, persistence}
