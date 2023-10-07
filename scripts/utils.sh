@@ -49,7 +49,7 @@ task_virtual_driver(){
 
     sudo cp /etc/mkinitcpio.conf /etc/mkinitcpio.conf.bak
     sudo sed -i "s/^MODULES=().*$/MODULES=(vsock vmw_vsock_vmci_transport vmw_balloon vmw_vmci vmwgfx)/g" /etc/mkinitcpio.conf
-    
+
     # note 这里要根据安装的内核设置
     sudo mkinitcpio -p linux
 }

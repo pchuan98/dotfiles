@@ -127,7 +127,7 @@ base=(
 )
 
 software=(
-    alacritty rofi waybar dunst swww swaybg
+    rust alacritty rofi waybar dunst swww swaybg
     thunar thunar-volman tumbler thunar-archive-plugin
 )
 
