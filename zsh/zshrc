@@ -43,11 +43,27 @@ export XDG_CONFIG_DIRS="/etc/xdg"
 export XDG_DATA_DIRS="/usr/local/share:/usr/share:/var/lib/flatpak/exports/share:$XDG_DATA_HOME/flatpak/exports/share"
 export XDG_RUNTIME_DIR="/run/user/$(id -u)"
 
-host_ip=$(cat /etc/resolv.conf |grep "nameserver" |cut -f 2 -d " ")
-port=10809
-export ALL_PROXY="http://$host_ip:$port"
-export http_proxy=http://$host_ip:$port
-export https_proxy=http://$host_ip:$port
+cmdline=$(cat /proc/cmdline)
+
+if [[ $cmdline == *"vmlinuz-linux"* ]]; then
+  echo "Current System IS VMWARE."
+  host_ip=$(awk '/nameserver/ {split($2, a, "."); print a[1]"."a[2]"."a[3]".1"}' /etc/resolv.conf)
+  port=10809
+  export ALL_PROXY="http://$host_ip:$port"
+  export http_proxy="http://$host_ip:$port"
+  export https_proxy="http://$host_ip:$port"
+elif [[ $cmdline == *"WSL_ROOT_INIT"* ]]; then
+  echo "Current System IS WSL."
+  host_ip=$(cat /etc/resolv.conf |grep "nameserver" |cut -f 2 -d " ")
+  port=10809
+  export ALL_PROXY="http://$host_ip:$port"
+  export http_proxy=http://$host_ip:$port
+  export https_proxy=http://$host_ip:$port
+else
+  # export ALL_PROXY="http://$host_ip:$port"
+  # export http_proxy="http://$host_ip:$port"
+  # export https_proxy="http://$host_ip:$port"
+fi
 
 export EDITOR=nvim
 
