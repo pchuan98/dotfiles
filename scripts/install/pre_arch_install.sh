@@ -1,6 +1,7 @@
 #!/bin/bash
 # set -exo
 set -e
+
 # This is a Bash script header
 # Author: chuan
 # Version: 1.0

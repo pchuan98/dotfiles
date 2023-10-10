@@ -219,7 +219,7 @@ zstyle ':fzf-tab:*' fzf-min-height 30
 (($+commands[grc])) || grc() {eval ${@[2,-1]}}
 (($+commands[jq])) || jq() {echo ';'}
 
-local dir=${0:h} src line arr ctx flags
+# local dir=${0:h} src line arr ctx flags
 
 for src in $ZSH_CONFIG_DIR/fzf-tab/*.zsh $sources; do
   while read -r line; do

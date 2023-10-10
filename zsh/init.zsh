@@ -30,6 +30,7 @@ bindkey '^[[1;5C' forward-word
 #    ███████╗██║ ╚████║ ╚████╔╝ ██║██║  ██║╚██████╔╝██║ ╚████║██║ ╚═╝ ██║███████╗██║ ╚████║   ██║
 #    ╚══════╝╚═╝  ╚═══╝  ╚═══╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝╚══════╝╚═╝  ╚═══╝   ╚═╝
 #
+
 export DOTFILES_DIR="/home/chuan/dotfiles"
 export ZSH_CONFIG_DIR="/home/chuan/dotfiles/zsh"
 
@@ -58,7 +59,7 @@ elif [[ $cmdline == *"WSL_ROOT_INIT"* ]]; then
   export http_proxy="http://$host_ip:$port"
   export https_proxy="http://$host_ip:$port"
 
-  cd /home/$(whoami)
+  cd $(dirname $DOTFILES_DIR)
 else
   # export ALL_PROXY="http://$host_ip:$port"
   # export http_proxy="http://$host_ip:$port"
@@ -89,14 +90,28 @@ alias uz='unzip' # uz <archive_decompress> -d <dir>
 
 alias mkdir="mkdir -p"
 
-# pacman
-alias pai="pacman -Slq | fzf -m --preview 'cat <(pacman -Si {1}) <(pacman -Fl {1} | awk \"{print \$2}\")' | xargs -ro sudo pacman -S"
-alias par="pacman -Qq | fzf --multi --preview 'pacman -Qi {1}' | xargs -ro sudo pacman -Rns"
-alias pas="pacman -Q |  fzf --multi --preview 'pacman -Qi {1}'"
+# package manager
 
-alias yi="yay -Slq | fzf -m --preview 'cat <(yay -Si {1}) <(yay -Fl {1} | awk \"{print \$2}\")' | xargs -ro  yay -S"
-alias yr="yay -Qq | fzf --multi --preview 'yay -Qi {1}' | xargs -ro yay -Rns"
-alias ys="yay -Q |  fzf --preview 'yay -Qi {1}'"
+if [ -f /etc/os-release ]; then
+    source /etc/os-release
+    if [ "$NAME" == "Arch Linux" ]; then
+        alias pai="pacman -Slq | fzf -m --preview 'cat <(pacman -Si {1}) <(pacman -Fl {1} | awk \"{print \$2}\")' | xargs -ro sudo pacman -S"
+        alias par="pacman -Qq | fzf --multi --preview 'pacman -Qi {1}' | xargs -ro sudo pacman -Rns"
+        alias pas="pacman -Q |  fzf --multi --preview 'pacman -Qi {1}'"
+
+        alias yi="yay -Slq | fzf -m --preview 'cat <(yay -Si {1}) <(yay -Fl {1} | awk \"{print \$2}\")' | xargs -ro  yay -S"
+        alias yr="yay -Qq | fzf --multi --preview 'yay -Qi {1}' | xargs -ro yay -Rns"
+        alias ys="yay -Q |  fzf --preview 'yay -Qi {1}'"
+    elif [ "$NAME" == "Ubuntu" ]; then
+        echo "This is Ubuntu. Please wait some times."
+    else
+        echo "Unsupported operating system: $NAME"
+    fi
+else
+    echo "Unable to determine the operating system."
+fi
+
+
 
 # zsh
 alias sz='source ~/.zshrc'
@@ -125,7 +140,7 @@ alias v=nvim
 alias fm=yazi
 
 # Toilet
-export TOILET_FONT_DIR=$HOME/dotfiles/fonts
+export TOILET_FONT_DIR=$DOTFILES_DIR/fonts
 alias tf1="toilet -t -d $TOILET_FONT_DIR -f ansi_regular"
 alias tf2="toilet -t -d $TOILET_FONT_DIR -f ansi_shadow"
 alias tf3="toilet -t -d $TOILET_FONT_DIR -f big_ne"

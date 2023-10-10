@@ -17,4 +17,4 @@ ln -sf $DOTFIRE_DIR/nvim $CONFIG_DIR
 ln -sf $DOTFIRE_DIR/yazi $CONFIG_DIR
 
 # link files
-ln -sf $DOTFIRE_DIR/zsh/zshrc $HOME/.zshrc
+ln -sf $DOTFIRE_DIR/zsh/init.zsh $HOME/.zshrc

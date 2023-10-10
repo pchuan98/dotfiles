@@ -1,30 +1,21 @@
 #!/bin/bash
+
 set -e
+
 # This is a Bash script header
 # Author: chuan
 # Version: 1.0
-# Date: September 14, 2023
-# Description: Tools for using arch linux.
+# Date: October 10, 2023
+# Description: Config arch linx.
 
 ##############################################################################################################################
 
-# color
-black="\e[30m"
-red="\e[31m"
-green="\e[32m"
-yellow="\e[33m"
-blue="\e[34m"
-magenta="\e[35m"
-cyan="\e[36m"
-white="\e[37m"
+path="$(realpath "$0")"
+name="$(basename "$path")"
+dir="$(dirname "$path")"
+parent="$(dirname "$dir")"
 
-end="\e[0m"
-
-color_echo(){
-    local text="$1"  # The text to print
-    local color="$2" # The color code (e.g., 31 for red, 32 for green, 33 for yellow, etc.)
-    echo -e "${color}${text}${end}"  # Use ANSI escape sequences to set and reset color
-}
+source $parent/common.sh
 
 ##############################################################################################################################
 
@@ -58,20 +49,25 @@ task_host(){
     # https://gitlab.com/ineo6/hosts/-/raw/master/next-hosts
 }
 
-if [ "$#" -eq 0 ]; then
-    color_echo "Please slecte you chioce:" $white
-    color_echo "1) Set proxy with virtualbox" $yellow
-    color_echo "2) Install virtualbox driver" $yellow
-    read -p "-> " user_input
+##############################################################################################################################
+# ███╗   ███╗ █████╗ ██╗███╗   ██╗
+# ████╗ ████║██╔══██╗██║████╗  ██║
+# ██╔████╔██║███████║██║██╔██╗ ██║
+# ██║╚██╔╝██║██╔══██║██║██║╚██╗██║
+# ██║ ╚═╝ ██║██║  ██║██║██║ ╚████║
+# ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝
 
-    # Check the user's input and perform different actions
-    if [ "$user_input" -eq 1 ]; then
+case "$1" in
+    "proxy")
         task_virtual_proxy
-    elif [ "$user_input" -eq 2 ]; then
+        ;;
+    "driver")
         task_virtual_driver
-    else
-        color_echo "Invalid input. Please enter 1,2..." $red
-    fi
-else
-    color_echo "Invalid input." $red
-fi
+        ;;
+    *)
+        color "Please slecte you chioce:" $white
+        color "1) Set proxy with virtualbox" $yellow
+        color "2) Install virtualbox driver" $yellow
+        ;;
+esac
+##############################################################################################################################
