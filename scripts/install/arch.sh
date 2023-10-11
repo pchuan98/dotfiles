@@ -48,12 +48,12 @@ detect_system(){
 
 disk(){
     tput clear
-    box $(lsblk)
+    box "$(lsblk)"
     color "Please ensure that the disk which you want to install.\n" $yellow
 
     read -p "Please enter the hard disk address: " device_path &&  cfdisk $device_path
 
-    box $(fdisk -l $device_path)
+    box "$(fdisk -l $device_path)"
 
     read -e -i "$device_path" -p "Please enter the swap path: " swap_path
     read -e -i "$device_path" -p "Please enter the /boot address: " boot_path
@@ -96,7 +96,7 @@ base_config(){
     src="/root/dotfiles"
     dst="/mnt/arch/root/dotfiles"
 
-    if [ -d "$folder_path" ]; then
+    if [ -d "$src" ]; then
         rm -rf $dst
         cp -r $src $dst
 
@@ -104,14 +104,13 @@ base_config(){
     else
         echo "${ERROR} The folder does not exist.Please move the dotfiles folder to the root directory: /root/dotfiles"
         exit 1
-    fid
+    fi
 }
 
 base_config_run(){
     tput clear
     box "\n # Start base config... #\n"
 
-    echo "$splitline"
     color "-> Config host and user value" $yellow
 
     hostname="arch" && 
@@ -153,7 +152,7 @@ base_config_run(){
     elif [ "$cpu_vendor" == "AuthenticAMD" ]; then
         pacman --noconfirm -S amd-ucode
     else
-        color_echo "cant find current cpu version" $red
+        color "cant find current cpu version" $red
     fi
 
     echo "$splitline"
@@ -180,7 +179,8 @@ base_config_run(){
     sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet"/GRUB_CMDLINE_LINUX_DEFAULT="loglevel=5 nowatchdog"/' /etc/default/grub
     sed -i '1iGRUB_DISABLE_OS_PROBER=false' /etc/default/grub
 
-    box $(grub-mkconfig -o /boot/grub/grub.cfg)
+    grub-mkconfig -o /boot/grub/grub.cfg
+    box "$(cat /boot/grub/grub.cfg)"
 }
 
 ##############################################################################################################################
@@ -194,6 +194,9 @@ add_user(){
     useradd -m -G wheel -s /bin/bash $user_input
     echo -e "971226\n971226" | passwd $user_input
     EDITOR=nvim visudo
+
+    cp -r /root/dotfiles /home/chuan/
+    chown chuan:chuan /home/chuan/dotfiles
 }
 
 config_pacman(){
@@ -205,14 +208,22 @@ config_pacman(){
     tput clear
     box "\n # Config pacman and install some software... #\n"
 
+    write_once "/etc/pacman.conf" "[archlinuxcn]"
+    write_once "/etc/pacman.conf" "Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/\$arch"
+    write_once "/etc/pacman.conf" "Server = https://mirrors.ustc.edu.cn/archlinuxcn/\$arch"
+    write_once "/etc/pacman.conf" "Server = https://mirrors.hit.edu.cn/archlinuxcn/\$arch"
+    write_once "/etc/pacman.conf" "Server = https://repo.huaweicloud.com/archlinuxcn/\$arch"
+
     sed -i "s/^#\?Color\s\?$/Color/g" /etc/pacman.conf
     sed -i "s/^#\?ParallelDownloads.*$/ParallelDownloads = 5/g" /etc/pacman.conf
     sed -i "1i\Server = https://mirrors.ustc.edu.cn/archlinux/\$repo/os/\$arch" /etc/pacman.d/mirrorlist
 
     pacman -Syyu
-    pacman -S --noconfirm --needed archlinuxcn-keyring archlinux-keyring
-    pacman -S --noconfirm --needed git linux-headers
-    pacman -S --noconfirm --needed yay
+    install "archlinuxcn-keyring"
+    install "archlinux-keyring"
+    install "git"
+    install "linux-headers"
+    install "yay"
 }
 
 config_git(){
@@ -236,6 +247,13 @@ config_git(){
     git config --system merge.tool vimdiff 
     git config --system mergetool.vimdiff.path nvim
 }
+
+change_owner(){
+    chown chuan:chuan /root/dotfiles
+    mv /root/dotfiles /home/chuan/
+}
+
+# note : yay -S exa bat unzip fd ripgrep
 
 ##############################################################################################################################
 base=(
@@ -301,3 +319,43 @@ software_install(){
         fi
     done
 }
+
+
+##############################################################################################################################
+# ███╗   ███╗ █████╗ ██╗███╗   ██╗
+# ████╗ ████║██╔══██╗██║████╗  ██║
+# ██╔████╔██║███████║██║██╔██╗ ██║
+# ██║╚██╔╝██║██╔══██║██║██║╚██╗██║
+# ██║ ╚═╝ ██║██║  ██║██║██║ ╚████║
+# ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝
+
+case "$1" in
+    "detect_system")
+        detect_system
+        ;;
+    "disk")
+        disk
+        ;;
+    "base_config")
+        base_config
+        ;;
+    "base_config_run")
+        base_config_run
+        ;;
+    "add_user")
+        add_user
+        ;;
+    "config_pacman")
+        config_pacman
+        ;;
+    "config_git")
+        config_git
+        ;;
+    "software_install")
+        software_install
+        ;;
+    *)
+        color "Please slecte you chioce:" $white
+        ;;
+esac
+##############################################################################################################################

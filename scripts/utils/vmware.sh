@@ -47,6 +47,7 @@ task_virtual_driver(){
 
 task_host(){
     # https://gitlab.com/ineo6/hosts/-/raw/master/next-hosts
+    echo "must use"
 }
 
 ##############################################################################################################################

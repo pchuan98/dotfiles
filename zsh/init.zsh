@@ -94,7 +94,8 @@ alias mkdir="mkdir -p"
 
 if [ -f /etc/os-release ]; then
     source /etc/os-release
-    if [ "$NAME" == "Arch Linux" ]; then
+
+    if [[ $NAME == "Arch Linux" ]]; then
         alias pai="pacman -Slq | fzf -m --preview 'cat <(pacman -Si {1}) <(pacman -Fl {1} | awk \"{print \$2}\")' | xargs -ro sudo pacman -S"
         alias par="pacman -Qq | fzf --multi --preview 'pacman -Qi {1}' | xargs -ro sudo pacman -Rns"
         alias pas="pacman -Q |  fzf --multi --preview 'pacman -Qi {1}'"
@@ -102,7 +103,7 @@ if [ -f /etc/os-release ]; then
         alias yi="yay -Slq | fzf -m --preview 'cat <(yay -Si {1}) <(yay -Fl {1} | awk \"{print \$2}\")' | xargs -ro  yay -S"
         alias yr="yay -Qq | fzf --multi --preview 'yay -Qi {1}' | xargs -ro yay -Rns"
         alias ys="yay -Q |  fzf --preview 'yay -Qi {1}'"
-    elif [ "$NAME" == "Ubuntu" ]; then
+    elif [[ $NAME == "Ubuntu" ]]; then
         echo "This is Ubuntu. Please wait some times."
     else
         echo "Unsupported operating system: $NAME"
@@ -110,8 +111,6 @@ if [ -f /etc/os-release ]; then
 else
     echo "Unable to determine the operating system."
 fi
-
-
 
 # zsh
 alias sz='source ~/.zshrc'
