@@ -31,8 +31,8 @@ bindkey '^[[1;5C' forward-word
 #    ╚══════╝╚═╝  ╚═══╝  ╚═══╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝╚══════╝╚═╝  ╚═══╝   ╚═╝
 #
 
-export DOTFILES_DIR="/home/chuan/dotfiles"
-export ZSH_CONFIG_DIR="/home/chuan/dotfiles/zsh"
+export DOTFILES_DIR="/root/dotfiles"
+export ZSH_CONFIG_DIR="/root/dotfiles/zsh"
 
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_CACHE_HOME="$HOME/.cache"
@@ -44,27 +44,27 @@ export XDG_RUNTIME_DIR="/run/user/$(id -u)"
 
 cmdline=$(cat /proc/cmdline)
 
-if [[ $cmdline == *"vmlinuz-linux"* ]]; then
-  echo "Current System IS VMWARE."
-  host_ip=$(awk '/nameserver/ {split($2, a, "."); print a[1]"."a[2]"."a[3]".1"}' /etc/resolv.conf)
-  port=10809
-  export ALL_PROXY="http://$host_ip:$port"
-  export http_proxy="http://$host_ip:$port"
-  export https_proxy="http://$host_ip:$port"
-elif [[ $cmdline == *"WSL_ROOT_INIT"* ]]; then
-  echo "Current System IS WSL."
-  host_ip=$(cat /etc/resolv.conf |grep "nameserver" |cut -f 2 -d " ")
-  port=10809
-  export ALL_PROXY="http://$host_ip:$port"
-  export http_proxy="http://$host_ip:$port"
-  export https_proxy="http://$host_ip:$port"
+# if [[ $cmdline == *"vmlinuz-linux"* ]]; then
+#   echo "Current System IS VMWARE."
+#   host_ip=$(awk '/nameserver/ {split($2, a, "."); print a[1]"."a[2]"."a[3]".1"}' /etc/resolv.conf)
+#   port=10809
+#   export ALL_PROXY="http://$host_ip:$port"
+#   export http_proxy="http://$host_ip:$port"
+#   export https_proxy="http://$host_ip:$port"
+# elif [[ $cmdline == *"WSL_ROOT_INIT"* ]]; then
+#   echo "Current System IS WSL."
+#   host_ip=$(cat /etc/resolv.conf |grep "nameserver" |cut -f 2 -d " ")
+#   port=10809
+#   export ALL_PROXY="http://$host_ip:$port"
+#   export http_proxy="http://$host_ip:$port"
+#   export https_proxy="http://$host_ip:$port"
 
-  cd $(dirname $DOTFILES_DIR)
-else
-  # export ALL_PROXY="http://$host_ip:$port"
-  # export http_proxy="http://$host_ip:$port"
-  # export https_proxy="http://$host_ip:$port"
-fi
+#   cd $(dirname $DOTFILES_DIR)
+# else
+#   # export ALL_PROXY="http://$host_ip:$port"
+#   # export http_proxy="http://$host_ip:$port"
+#   # export https_proxy="http://$host_ip:$port"
+# fi
 
 export EDITOR=nvim
 
@@ -92,25 +92,25 @@ alias mkdir="mkdir -p"
 
 # package manager
 
-if [ -f /etc/os-release ]; then
-    source /etc/os-release
+# if [ -f /etc/os-release ]; then
+#     source /etc/os-release
 
-    if [[ $NAME == "Arch Linux" ]]; then
-        alias pai="pacman -Slq | fzf -m --preview 'cat <(pacman -Si {1}) <(pacman -Fl {1} | awk \"{print \$2}\")' | xargs -ro sudo pacman -S"
-        alias par="pacman -Qq | fzf --multi --preview 'pacman -Qi {1}' | xargs -ro sudo pacman -Rns"
-        alias pas="pacman -Q |  fzf --multi --preview 'pacman -Qi {1}'"
+#     if [[ $NAME == "Arch Linux" ]]; then
+#         alias pai="pacman -Slq | fzf -m --preview 'cat <(pacman -Si {1}) <(pacman -Fl {1} | awk \"{print \$2}\")' | xargs -ro sudo pacman -S"
+#         alias par="pacman -Qq | fzf --multi --preview 'pacman -Qi {1}' | xargs -ro sudo pacman -Rns"
+#         alias pas="pacman -Q |  fzf --multi --preview 'pacman -Qi {1}'"
 
-        alias yi="yay -Slq | fzf -m --preview 'cat <(yay -Si {1}) <(yay -Fl {1} | awk \"{print \$2}\")' | xargs -ro  yay -S"
-        alias yr="yay -Qq | fzf --multi --preview 'yay -Qi {1}' | xargs -ro yay -Rns"
-        alias ys="yay -Q |  fzf --preview 'yay -Qi {1}'"
-    elif [[ $NAME == "Ubuntu" ]]; then
-        echo "This is Ubuntu. Please wait some times."
-    else
-        echo "Unsupported operating system: $NAME"
-    fi
-else
-    echo "Unable to determine the operating system."
-fi
+#         alias yi="yay -Slq | fzf -m --preview 'cat <(yay -Si {1}) <(yay -Fl {1} | awk \"{print \$2}\")' | xargs -ro  yay -S"
+#         alias yr="yay -Qq | fzf --multi --preview 'yay -Qi {1}' | xargs -ro yay -Rns"
+#         alias ys="yay -Q |  fzf --preview 'yay -Qi {1}'"
+#     elif [[ $NAME == "Ubuntu" ]]; then
+#         echo "This is Ubuntu. Please wait some times."
+#     else
+#         echo "Unsupported operating system: $NAME"
+#     fi
+# else
+#     echo "Unable to determine the operating system."
+# fi
 
 # zsh
 alias sz='source ~/.zshrc'
@@ -272,5 +272,5 @@ bindkey -e
 #
 
 source "$ZSH_CONFIG_DIR/plugins.zsh"
-
+source "$HOME/.cargo/env"
 ##############################################################################################################
